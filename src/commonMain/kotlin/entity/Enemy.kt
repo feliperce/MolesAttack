@@ -2,14 +2,8 @@ package entity
 
 import com.soywiz.klock.milliseconds
 import com.soywiz.klock.seconds
-import com.soywiz.korge.input.mouse
-import com.soywiz.korge.input.onClick
-import com.soywiz.korge.tiled.colorFromARGB
 import com.soywiz.korge.view.*
-import com.soywiz.korim.atlas.readAtlas
 import com.soywiz.korim.bitmap.Bitmap
-import com.soywiz.korim.color.Colors
-import com.soywiz.korim.format.displayImage
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
 import kotlin.random.Random
@@ -81,11 +75,9 @@ class Enemy(
 
         onFrameChanged {
 
-            if (currentSpriteIndex == 2) {
+            if (currentSpriteIndex == 2 && status == Status.SHOWING) {
                 status = Status.IDLE
             }
-            println(currentSpriteIndex)
-            it.sprites
         }
 
 
@@ -105,6 +97,7 @@ class Enemy(
         if (status == Status.HIDING) {
             val randomSpeedIndex = Random.nextInt(0, movimentSpeeds.size)
             playAnimation(showAnimation, spriteDisplayTime = movimentSpeeds[randomSpeedIndex].seconds, endFrame = 3)
+            status = Status.SHOWING
         }
     }
 

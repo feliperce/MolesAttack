@@ -4,8 +4,10 @@ import com.soywiz.korge.*
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.time.timers
 import com.soywiz.korge.view.*
+import com.soywiz.korim.color.Colors
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.format.*
+import com.soywiz.korim.text.TextAlignment
 import com.soywiz.korio.file.std.*
 import entity.Enemy
 import entity.Hammer
@@ -34,8 +36,7 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 		enemyArray.add(enemy)
 	}
 
-	var minuteStart = 3
-	var secondStart = 30
+	var life = 5
 	var secondGenerateEnemy = 5
 	var secondsIncreaseDificulty = 15
 	var currentEnemyX = 0
@@ -55,6 +56,15 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 			hammer.show(mouseX, mouseY)
 			enemy.hit()
 		}
+		enemy.addUpdater {
+			if (this.failure) {
+				val error = text("X", textSize = this.width/2, color = Colors.RED).position(this.x+30, this.y)
+				this.failure = false
+				timers.interval(2.seconds) {
+					removeChild(error)
+				}
+			}
+		}
 		currentEnemyX += enemyWidth
 
 		if (index == currentRow) {
@@ -63,6 +73,8 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 			currentEnemyX = 0
 		}
 	}
+
+
 
 	var minutes = 0
 	var seconds = 0
@@ -100,7 +112,5 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 		text = "${minutes}:${seconds}"
 		val scale = time / 16.milliseconds
 	}
-
-
 
 }

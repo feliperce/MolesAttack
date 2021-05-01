@@ -12,13 +12,18 @@ class Enemy(
     private val container: Container
 ) : Sprite() {
 
-    var status: Status = Status.IDLE
+    var status: Status = Status.HIDING
     var hidingSprite: Bitmap? = null
     var showAnimation: SpriteAnimation? = null
     var deadAnimation: SpriteAnimation? = null
     var hidingAnimation: SpriteAnimation? = null
     var movmentSpeed = 3
     var movimentSpeeds = arrayOf(3, 4, 5, 2)
+    var failure = false
+    private val sprWidth = 187
+    private val sprHeight = 150
+    val sprCenterW = sprWidth/2
+    val sprCenterH = sprHeight/2
 
     suspend fun initialize() {
         val hidingSprite = resourcesVfs["spr_enemy_hiding.png"].readBitmap()
@@ -27,8 +32,8 @@ class Enemy(
 
         hidingAnimation = SpriteAnimation(
             spriteMap = hidingSprite,
-            spriteWidth = 187,
-            spriteHeight = 150,
+            spriteWidth = sprWidth,
+            spriteHeight = sprHeight,
             marginTop = 0,
             marginLeft = 0,
             columns = 1,
@@ -39,8 +44,8 @@ class Enemy(
 
         showAnimation = SpriteAnimation(
             spriteMap = showSprite,
-            spriteWidth = 187,
-            spriteHeight = 150,
+            spriteWidth = sprWidth,
+            spriteHeight = sprHeight,
             marginTop = 0,
             marginLeft = 0,
             columns = 3,
@@ -51,8 +56,8 @@ class Enemy(
 
         deadAnimation = SpriteAnimation(
             spriteMap = deadSprite,
-            spriteWidth = 187,
-            spriteHeight = 150,
+            spriteWidth = sprWidth,
+            spriteHeight = sprHeight,
             marginTop = 0,
             marginLeft = 0,
             columns = 2,
@@ -62,11 +67,13 @@ class Enemy(
         )
         addTo(container)
 
-        onAnimationStarted {
-
-        }
+        //playAnimation(hidingAnimation, spriteDisplayTime = 0.milliseconds)
 
         onAnimationCompleted {
+            if (status == Status.IDLE) {
+                failure = true
+                hide()
+            }
             if (status == Status.DIED) {
                 hide()
             }
@@ -113,6 +120,7 @@ class Enemy(
     }
 
     enum class Status {
+        FAILURE,
         HIDING,
         IDLE,
         SHOWING,

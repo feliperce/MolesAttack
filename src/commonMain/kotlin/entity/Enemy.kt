@@ -17,9 +17,9 @@ class Enemy(
     var showAnimation: SpriteAnimation? = null
     var deadAnimation: SpriteAnimation? = null
     var hidingAnimation: SpriteAnimation? = null
-    var movmentSpeed = 3
-    var movimentSpeeds = arrayOf(3, 4, 5, 2)
+    var movementSpeeds = arrayOf(3, 4, 5, 2)
     var failure = false
+    var canScore = false
     private val sprWidth = 187
     private val sprHeight = 150
     val sprCenterW = sprWidth/2
@@ -95,21 +95,22 @@ class Enemy(
     }
 
     fun show() {
-        val randomSpeedIndex = Random.nextInt(0, movimentSpeeds.size)
-        playAnimation(showAnimation, spriteDisplayTime = movimentSpeeds[randomSpeedIndex].seconds)
+        val randomSpeedIndex = Random.nextInt(0, movementSpeeds.size)
+        playAnimation(showAnimation, spriteDisplayTime = movementSpeeds[randomSpeedIndex].seconds)
 
     }
 
     fun showIfNotIdle() {
         if (status == Status.HIDING) {
-            val randomSpeedIndex = Random.nextInt(0, movimentSpeeds.size)
-            playAnimation(showAnimation, spriteDisplayTime = movimentSpeeds[randomSpeedIndex].seconds, endFrame = 3)
+            val randomSpeedIndex = Random.nextInt(0, movementSpeeds.size)
+            playAnimation(showAnimation, spriteDisplayTime = movementSpeeds[randomSpeedIndex].seconds, endFrame = 3)
             status = Status.SHOWING
         }
     }
 
     fun kill() {
         status = Status.DIED
+        canScore = true
         playAnimation(deadAnimation, spriteDisplayTime = 2.seconds)
     }
 

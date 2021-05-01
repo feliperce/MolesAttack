@@ -16,6 +16,7 @@ import com.soywiz.korma.geom.degrees
 import com.soywiz.korma.interpolation.Easing
 import entity.Enemy
 import entity.Hammer
+import kotlin.random.Random
 
 suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bgcolor = RGBA(253, 247, 240)) {
 
@@ -27,10 +28,6 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 
 	val hammer = Hammer(this).apply {
 		initialize()
-	}
-
-	onClick {
-		hammer.show(mouseX, mouseY)
 	}
 
 	val qtColumn = 4
@@ -46,8 +43,8 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 
 	var minuteStart = 3
 	var secondStart = 30
-	var minuteIncreaseDificulty = 1
-	var secondGenerateEnemy = 4
+	var secondGenerateEnemy = 5
+	var secondsIncreaseDificulty = 15
 	var currentEnemyX = 0
 	var currentEnemyY = 120
 	val enemyOnRow = 4
@@ -56,15 +53,16 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 	var currentRow = 4
 
 	// Gera inimigos escondidos
-	enemyArray.forEachIndexed { index, sprite ->
-		//sprite.size(enemyWidth, enemyHeight)
-		sprite.initialize()
-		sprite.scale(0.6, 0.6)
-		sprite.position(currentEnemyX, currentEnemyY)
-		sprite.hide()
+	enemyArray.forEachIndexed { index, enemy ->
+		enemy.initialize()
+		enemy.scale(0.6, 0.6)
+		enemy.position(currentEnemyX, currentEnemyY)
+		enemy.hide()
+		enemy.onClick {
+			hammer.show(mouseX, mouseY)
+			enemy.hit()
+		}
 		currentEnemyX += enemyWidth
-		//sprite.show()
-		//sprite.playAnimation(spriteDisplayTime = 2.seconds)
 
 		if (index == currentRow) {
 			currentEnemyY += enemyHeight
@@ -80,8 +78,17 @@ suspend fun main() = Korge(width = 480, height = 640, title = "Moles Attack", bg
 	val gameTimer = timers.interval(1.seconds) {
 		seconds++
 
+		// enemy show
 		if (seconds % secondGenerateEnemy == 0) {
+			val randomPositionIndex = Random.nextInt(0, enemyArray.size)
+			enemyArray[randomPositionIndex].showIfNotIdle()
+		}
 
+		// increase dificulty
+		if (seconds % secondsIncreaseDificulty == 0) {
+			if (secondGenerateEnemy > 1) {
+				secondGenerateEnemy--
+			}
 		}
 
 		if (seconds == 60) {

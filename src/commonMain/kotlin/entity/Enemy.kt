@@ -2,11 +2,13 @@ package entity
 
 import com.soywiz.klock.milliseconds
 import com.soywiz.klock.seconds
-import com.soywiz.korge.view.Container
-import com.soywiz.korge.view.Sprite
-import com.soywiz.korge.view.SpriteAnimation
-import com.soywiz.korge.view.addTo
+import com.soywiz.korge.input.mouse
+import com.soywiz.korge.input.onClick
+import com.soywiz.korge.tiled.colorFromARGB
+import com.soywiz.korge.view.*
+import com.soywiz.korim.atlas.readAtlas
 import com.soywiz.korim.bitmap.Bitmap
+import com.soywiz.korim.color.Colors
 import com.soywiz.korim.format.displayImage
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
@@ -16,13 +18,11 @@ class Enemy(
     private val container: Container
 ) : Sprite() {
 
+    var status: Status = Status.IDLE
     var hidingSprite: Bitmap? = null
     var showAnimation: SpriteAnimation? = null
     var deadAnimation: SpriteAnimation? = null
     var hidingAnimation: SpriteAnimation? = null
-    var dead = false
-    var idle = false
-    var animating = false
     var movmentSpeed = 3
     var movimentSpeeds = arrayOf(3, 4, 5, 2)
 
@@ -69,32 +69,60 @@ class Enemy(
         addTo(container)
 
         onAnimationStarted {
-            animating = true
+
         }
 
         onAnimationCompleted {
-            animating = false
+            if (status == Status.DIED) {
+                hide()
+            }
+            status = Status.HIDING
         }
+
+        onFrameChanged {
+
+            if (currentSpriteIndex == 2) {
+                status = Status.IDLE
+            }
+            println(currentSpriteIndex)
+            it.sprites
+        }
+
 
     }
 
     fun hide() {
-        playAnimation(hidingAnimation, spriteDisplayTime = 0.milliseconds, endFrame = 0, startFrame = 0)
+        playAnimation(hidingAnimation, spriteDisplayTime = 0.milliseconds)
     }
 
     fun show() {
         val randomSpeedIndex = Random.nextInt(0, movimentSpeeds.size)
         playAnimation(showAnimation, spriteDisplayTime = movimentSpeeds[randomSpeedIndex].seconds)
+
+    }
+
+    fun showIfNotIdle() {
+        if (status == Status.HIDING) {
+            val randomSpeedIndex = Random.nextInt(0, movimentSpeeds.size)
+            playAnimation(showAnimation, spriteDisplayTime = movimentSpeeds[randomSpeedIndex].seconds, endFrame = 3)
+        }
     }
 
     fun kill() {
-        dead = true
+        status = Status.DIED
         playAnimation(deadAnimation, spriteDisplayTime = 2.seconds)
     }
 
     fun hit() {
-
+        if (status == Status.IDLE) {
+            kill()
+        }
     }
 
-
+    enum class Status {
+        HIDING,
+        IDLE,
+        SHOWING,
+        DIED
+    }
 }

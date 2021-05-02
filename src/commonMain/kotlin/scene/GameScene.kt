@@ -1,7 +1,9 @@
 package scene
 
-import com.soywiz.klock.milliseconds
 import com.soywiz.klock.seconds
+import com.soywiz.korau.sound.infinitePlaybackTimes
+import com.soywiz.korau.sound.readMusic
+import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.time.timers
@@ -21,6 +23,29 @@ class GameScene : Scene() {
 
     override suspend fun Container.sceneInit() {
 
+        val isDebugMode = false
+
+        val bgImg = resourcesVfs["bg_game.png"].readBitmap()
+        val lifeBitmap = resourcesVfs["gui_life.png"].readBitmap()
+
+        // Sounds
+        val gameMusic = resourcesVfs["sound/msc_game.mp3"].readSound()
+        val scoreSound = resourcesVfs["sound/snd_score.wav"].readSound()
+        val errorSound = resourcesVfs["sound/snd_error.mp3"].readSound()
+        val hitSound = resourcesVfs["sound/snd_hit.mp3"].readSound()
+        val playerDeadSound = resourcesVfs["sound/snd_player_dead.mp3"].readSound()
+        //Enemy
+        val enemySoundArray = arrayOf(
+            resourcesVfs["sound/enemy/snd_enemy1.wav"].readSound(),
+            resourcesVfs["sound/enemy/snd_enemy2.wav"].readSound(),
+            resourcesVfs["sound/enemy/snd_enemy3.wav"].readSound(),
+            resourcesVfs["sound/enemy/snd_enemy4.wav"].readSound(),
+            resourcesVfs["sound/enemy/snd_enemy5.wav"].readSound(),
+            resourcesVfs["sound/enemy/snd_enemy6.wav"].readSound()
+        )
+
+        val gameMusicChannel = gameMusic.play(infinitePlaybackTimes)
+
         val qtColumn = 4
         val qtRow = 4
         val qtEnemy = qtColumn * qtRow
@@ -37,11 +62,12 @@ class GameScene : Scene() {
         val enemyHeight = 100
         var currentRow = 4
 
-        val bgImg = resourcesVfs["bg_game.png"].readBitmap()
+        var minutes = 0
+        var seconds = 0
+
         val bg = Image(bgImg)
         bg.size(views.virtualWidth, views.virtualHeight)
 
-        val lifeBitmap = resourcesVfs["gui_life.png"].readBitmap()
         val lifeGui = Image(lifeBitmap).apply {
             scale(0.5, 0.5)
             position(10, 10)
@@ -72,8 +98,10 @@ class GameScene : Scene() {
 
         val enemyArray = arrayListOf<Enemy>()
 
-        repeat(qtEnemy+1) {
-            val enemy = Enemy(this)
+        for (i in 1..qtEnemy) {
+            val enemy = Enemy(this).apply {
+                id = i
+            }
             enemyArray.add(enemy)
         }
 
@@ -86,18 +114,27 @@ class GameScene : Scene() {
             enemy.onClick {
                 hammer.show(localMouseX(views), localMouseY(views))
                 enemy.hit()
+                hitSound.play()
             }
+
+            if (isDebugMode) {
+                text("ID: ${enemy.id} failure: ${enemy.failure}").position(enemy.x, enemy.y)
+            }
+
             enemy.addUpdater {
                 if (this.failure) {
+                    errorSound.play()
                     val error = text("X", textSize = this.width/2, color = Colors.RED).position(this.x+30, this.y)
                     this.failure = false
                     life--
+
                     timers.interval(2.seconds) {
                         removeChild(error)
                     }
                 }
 
                 if (this.canScore) {
+                    scoreSound.play()
                     val randomScore = Random.nextInt(0, scores.size)
                     score += scores[randomScore]
                     canScore = false
@@ -105,16 +142,12 @@ class GameScene : Scene() {
             }
             currentEnemyX += enemyWidth
 
-            if (index == currentRow) {
+            if (index == currentRow-1) {
                 currentEnemyY += enemyHeight
                 currentRow += enemyOnRow
                 currentEnemyX = 0
             }
         }
-
-        var minutes = 0
-        var seconds = 0
-        var gameOver = false
 
         val gameTimer = timers.interval(1.seconds) {
             seconds++
@@ -122,7 +155,14 @@ class GameScene : Scene() {
             // enemy show
             if (seconds % secondGenerateEnemy == 0) {
                 val randomPositionIndex = Random.nextInt(0, enemyArray.size)
+                val generateEnemySound = Random.nextBoolean()
                 enemyArray[randomPositionIndex].showIfNotIdle()
+
+                if (generateEnemySound) {
+                    Random.nextInt(0, enemySoundArray.size).let {
+                        enemySoundArray[it].play()
+                    }
+                }
             }
 
             // increase dificulty
@@ -140,15 +180,18 @@ class GameScene : Scene() {
 
         addUpdater {
             if (life == 0) {
+                life = -1
                 launchImmediately {
+                    gameTimer.close()
+                    gameMusicChannel.stop()
+                    playerDeadSound.play()
                     val gameOver = GameOver(
                         score, minutes, seconds
                     )
+
                     sceneContainer.changeTo<GameOverScene>(gameOver)
                 }
             }
-
-
         }
 
         /*text("${minutes}:${seconds}").addUpdater { time ->

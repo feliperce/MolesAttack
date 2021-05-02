@@ -1,9 +1,6 @@
 package scene
 
-import com.soywiz.klock.DateFormat
-import com.soywiz.klock.DateTime
-import com.soywiz.klock.DateTimeTz
-import com.soywiz.klock.parse
+import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.*
@@ -12,7 +9,6 @@ import com.soywiz.korim.text.TextAlignment
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.Point
 import data.GameOver
-import extensions.dateToFormattedDateString
 
 class GameOverScene(
 	val gameOver: GameOver
@@ -24,6 +20,7 @@ class GameOverScene(
 		val gameoverBitmap = resourcesVfs["gui_gameover.png"].readBitmap()
 		val replayButtonBitmap = resourcesVfs["gui_btn_replay.png"].readBitmap()
 		val menuButtonBitmap = resourcesVfs["gui_btn_menu.png"].readBitmap()
+		val gameOverSound = resourcesVfs["sound/snd_gameover.mp3"].readSound()
 
 		val bg = Image(bgImg)
 		bg.size(views.virtualWidth, views.virtualHeight)
@@ -45,6 +42,8 @@ class GameOverScene(
 			position(views.virtualWidth-70, views.virtualHeight-70)
 		}
 
+		gameOverSound.play()
+
 		addChild(bg)
 		addChild(gameOverGui)
 		addChild(replayButtonGui)
@@ -63,6 +62,7 @@ class GameOverScene(
 		}
 
 		replayButtonGui.onClick {
+			sceneContainer.removeAllComponents()
 			sceneContainer.changeTo<GameScene>()
 		}
 

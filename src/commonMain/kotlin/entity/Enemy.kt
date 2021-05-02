@@ -12,8 +12,8 @@ class Enemy(
     private val container: Container
 ) : Sprite() {
 
+    var id: Int = -1
     var status: Status = Status.HIDING
-    var hidingSprite: Bitmap? = null
     var showAnimation: SpriteAnimation? = null
     var deadAnimation: SpriteAnimation? = null
     var hidingAnimation: SpriteAnimation? = null

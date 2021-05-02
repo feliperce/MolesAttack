@@ -6,6 +6,7 @@ import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.*
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korim.text.TextAlignment
+import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.Point
 import data.GameOver
@@ -62,8 +63,15 @@ class GameOverScene(
 		}
 
 		replayButtonGui.onClick {
-			sceneContainer.removeAllComponents()
-			sceneContainer.changeTo<GameScene>()
+			launchImmediately {
+				sceneContainer.changeTo<GameScene>()
+			}
+		}
+
+		menuButtonGui.onClick {
+			launchImmediately {
+				sceneContainer.changeTo<MenuScene>()
+			}
 		}
 
     }

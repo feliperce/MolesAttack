@@ -19,18 +19,20 @@ import entity.Enemy
 import entity.Hammer
 import scene.GameOverScene
 import scene.GameScene
+import scene.MenuScene
 import kotlin.random.Random
 import kotlin.reflect.KClass
 
 suspend fun main() = Korge(Korge.Config(module = MainModule))
 
 object MainModule : Module() {
-	override val mainScene: KClass<out Scene> = GameScene::class
+	override val mainScene: KClass<out Scene> = MenuScene::class
 	override val title: String = "Moles Attack"
 	override val size: SizeInt = SizeInt(480,640)
 
 	override suspend fun AsyncInjector.configure() {
 		mapInstance(GameOver())
+		mapPrototype { MenuScene() }
 		mapPrototype { GameScene() }
 		mapPrototype { GameOverScene(get()) }
 	}

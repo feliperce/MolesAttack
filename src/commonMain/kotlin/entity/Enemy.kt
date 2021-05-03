@@ -3,7 +3,6 @@ package entity
 import com.soywiz.klock.milliseconds
 import com.soywiz.klock.seconds
 import com.soywiz.korge.view.*
-import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
 import kotlin.random.Random
@@ -26,9 +25,9 @@ class Enemy(
     val sprCenterH = sprHeight/2
 
     suspend fun initialize() {
-        val hidingSprite = resourcesVfs["spr_enemy_hiding.png"].readBitmap()
-        val showSprite = resourcesVfs["spr_enemy_show.png"].readBitmap()
-        val deadSprite = resourcesVfs["spr_enemy_dead.png"].readBitmap()
+        val hidingSprite = resourcesVfs["img/spr_enemy_hiding.png"].readBitmap()
+        val showSprite = resourcesVfs["img/spr_enemy_show.png"].readBitmap()
+        val deadSprite = resourcesVfs["img/spr_enemy_dead.png"].readBitmap()
 
         hidingAnimation = SpriteAnimation(
             spriteMap = hidingSprite,

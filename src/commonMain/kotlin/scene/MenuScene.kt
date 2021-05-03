@@ -1,5 +1,6 @@
 package scene
 
+import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.*
@@ -11,9 +12,11 @@ class MenuScene() : Scene() {
 
     override suspend fun Container.sceneInit() {
 
-        val bgImg = resourcesVfs["bg_game.png"].readBitmap()
-        val logoBitmap = resourcesVfs["logo.png"].readBitmap()
-        val playButtonBitmap = resourcesVfs["gui_btn_play.png"].readBitmap()
+        val menuMusic = resourcesVfs["sound/msc_menu.wav"].readSound().play()
+
+        val bgImg = resourcesVfs["img/bg_game.png"].readBitmap()
+        val logoBitmap = resourcesVfs["img/logo.png"].readBitmap()
+        val playButtonBitmap = resourcesVfs["img/gui_btn_play.png"].readBitmap()
 
         val centerW = views.virtualWidth/2
         val centerH = views.virtualHeight/2
@@ -34,6 +37,8 @@ class MenuScene() : Scene() {
                 it.onDown {
                     scale(0.8, 0.8)
                 }
+
+                menuMusic.stop()
 
                 launchImmediately {
                     sceneContainer.changeTo<GameScene>()

@@ -1,9 +1,11 @@
 package scene
 
+import com.soywiz.korau.sound.Sound
 import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.*
+import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korim.text.TextAlignment
 import com.soywiz.korio.async.launchImmediately
@@ -15,17 +17,24 @@ class GameOverScene(
 	val gameOver: GameOver
 ) : Scene() {
 
-    override suspend fun Container.sceneInit() {
+	private lateinit var bgImg: Bitmap
+	private lateinit var gameoverBitmap: Bitmap
+	private lateinit var replayButtonBitmap: Bitmap
+	private lateinit var menuButtonBitmap: Bitmap
+	private lateinit var gameOverSound: Sound
 
-		val bgImg = resourcesVfs["bg_game.png"].readBitmap()
-		val gameoverBitmap = resourcesVfs["gui_gameover.png"].readBitmap()
-		val replayButtonBitmap = resourcesVfs["gui_btn_replay.png"].readBitmap()
-		val menuButtonBitmap = resourcesVfs["gui_btn_menu.png"].readBitmap()
-		val gameOverSound = resourcesVfs["sound/snd_gameover.mp3"].readSound()
+    override suspend fun Container.sceneInit() {
+		bgImg = resourcesVfs["img/bg_game.png"].readBitmap()
+		gameoverBitmap = resourcesVfs["img/gui_gameover.png"].readBitmap()
+		replayButtonBitmap = resourcesVfs["img/gui_btn_replay.png"].readBitmap()
+		menuButtonBitmap = resourcesVfs["img/gui_btn_menu.png"].readBitmap()
+		gameOverSound = resourcesVfs["sound/snd_gameover.mp3"].readSound()
+    }
+
+	override suspend fun Container.sceneMain() {
 
 		val bg = Image(bgImg)
 		bg.size(views.virtualWidth, views.virtualHeight)
-
 
 		val gameOverGui = Image(gameoverBitmap).apply {
 			//scale(1.3, 1.3)
@@ -73,6 +82,5 @@ class GameOverScene(
 				sceneContainer.changeTo<MenuScene>()
 			}
 		}
-
-    }
+	}
 }

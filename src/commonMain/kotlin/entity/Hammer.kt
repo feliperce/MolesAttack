@@ -3,7 +3,6 @@ package entity
 import com.soywiz.korge.view.*
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
-import com.soywiz.korma.geom.Point
 
 class Hammer(
     private val container: Container
@@ -16,7 +15,7 @@ class Hammer(
     private val sprCenterH = sprHeight/2
 
     suspend fun initialize() {
-        val showSprite = resourcesVfs["spr_hammer.png"].readBitmap()
+        val showSprite = resourcesVfs["img/spr_hammer.png"].readBitmap()
 
         showAnimation = SpriteAnimation(
             spriteMap = showSprite,

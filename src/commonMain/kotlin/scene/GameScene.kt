@@ -1,13 +1,14 @@
 package scene
 
 import com.soywiz.klock.seconds
+import com.soywiz.korau.sound.Sound
 import com.soywiz.korau.sound.infinitePlaybackTimes
-import com.soywiz.korau.sound.readMusic
 import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.time.timers
 import com.soywiz.korge.view.*
+import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.color.Colors
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korim.text.TextAlignment
@@ -17,25 +18,31 @@ import com.soywiz.korma.geom.Point
 import data.GameOver
 import entity.Enemy
 import entity.Hammer
+import kotlinx.coroutines.coroutineScope
 import kotlin.random.Random
 
 class GameScene : Scene() {
 
+    private lateinit var bgImg: Bitmap
+    private lateinit var lifeBitmap: Bitmap
+    private lateinit var gameMusic: Sound
+    private lateinit var scoreSound: Sound
+    private lateinit var errorSound: Sound
+    private lateinit var hitSound: Sound
+    private lateinit var enemySoundArray: Array<Sound>
+
     override suspend fun Container.sceneInit() {
 
-        val isDebugMode = false
-
-        val bgImg = resourcesVfs["bg_game.png"].readBitmap()
-        val lifeBitmap = resourcesVfs["gui_life.png"].readBitmap()
+        bgImg = resourcesVfs["img/bg_game.png"].readBitmap()
+        lifeBitmap = resourcesVfs["img/gui_life.png"].readBitmap()
 
         // Sounds
-        val gameMusic = resourcesVfs["sound/msc_game.mp3"].readSound()
-        val scoreSound = resourcesVfs["sound/snd_score.wav"].readSound()
-        val errorSound = resourcesVfs["sound/snd_error.mp3"].readSound()
-        val hitSound = resourcesVfs["sound/snd_hit.mp3"].readSound()
-        val playerDeadSound = resourcesVfs["sound/snd_player_dead.mp3"].readSound()
+        gameMusic = resourcesVfs["sound/msc_game.wav"].readSound()
+        scoreSound = resourcesVfs["sound/snd_score.wav"].readSound()
+        errorSound = resourcesVfs["sound/snd_error.mp3"].readSound()
+        hitSound = resourcesVfs["sound/snd_hit.mp3"].readSound()
         //Enemy
-        val enemySoundArray = arrayOf(
+        enemySoundArray = arrayOf(
             resourcesVfs["sound/enemy/snd_enemy1.wav"].readSound(),
             resourcesVfs["sound/enemy/snd_enemy2.wav"].readSound(),
             resourcesVfs["sound/enemy/snd_enemy3.wav"].readSound(),
@@ -43,6 +50,11 @@ class GameScene : Scene() {
             resourcesVfs["sound/enemy/snd_enemy5.wav"].readSound(),
             resourcesVfs["sound/enemy/snd_enemy6.wav"].readSound()
         )
+
+    }
+
+    override suspend fun Container.sceneMain() {
+        val isDebugMode = false
 
         val gameMusicChannel = gameMusic.play(infinitePlaybackTimes)
 
@@ -179,16 +191,16 @@ class GameScene : Scene() {
         }
 
         addUpdater {
-            if (life == 0) {
-                life = -1
-                launchImmediately {
-                    gameTimer.close()
-                    gameMusicChannel.stop()
-                    playerDeadSound.play()
-                    val gameOver = GameOver(
-                        score, minutes, seconds
-                    )
+            if (life <= 0) {
 
+                gameTimer.close()
+
+                val gameOver = GameOver(
+                    score, minutes, seconds
+                )
+
+                launchImmediately {
+                    gameMusicChannel.stop()
                     sceneContainer.changeTo<GameOverScene>(gameOver)
                 }
             }
@@ -197,6 +209,5 @@ class GameScene : Scene() {
         /*text("${minutes}:${seconds}").addUpdater { time ->
             text = "${minutes}:${seconds}"
         }*/
-
     }
 }

@@ -56,7 +56,7 @@ class GameScene : Scene() {
     override suspend fun Container.sceneMain() {
         val isDebugMode = false
 
-        val gameMusicChannel = gameMusic.play(infinitePlaybackTimes)
+        val gameMusicChannel = gameMusic.play()
 
         val qtColumn = 4
         val qtRow = 4

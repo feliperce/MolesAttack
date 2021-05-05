@@ -1,5 +1,7 @@
 package scene
 
+import com.soywiz.klock.infiniteTimes
+import com.soywiz.korau.sound.infinitePlaybackTimes
 import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene

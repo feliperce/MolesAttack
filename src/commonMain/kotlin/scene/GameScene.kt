@@ -56,7 +56,7 @@ class GameScene : Scene() {
     override suspend fun Container.sceneMain() {
         val isDebugMode = false
 
-        val gameMusicChannel = gameMusic.play()
+        val gameMusicChannel = gameMusic.play(infinitePlaybackTimes)
 
         val qtColumn = 4
         val qtRow = 4
@@ -135,7 +135,9 @@ class GameScene : Scene() {
 
             enemy.addUpdater {
                 if (this.failure) {
-                    errorSound.play()
+                    launchImmediately {
+                        errorSound.play()
+                    }
                     val error = text("X", textSize = this.width/2, color = Colors.RED).position(this.x+30, this.y)
                     this.failure = false
                     life--
@@ -146,7 +148,9 @@ class GameScene : Scene() {
                 }
 
                 if (this.canScore) {
-                    scoreSound.play()
+                    launchImmediately {
+                        scoreSound.play()
+                    }
                     val randomScore = Random.nextInt(0, scores.size)
                     score += scores[randomScore]
                     canScore = false
@@ -171,8 +175,10 @@ class GameScene : Scene() {
                 enemyArray[randomPositionIndex].showIfNotIdle()
 
                 if (generateEnemySound) {
-                    Random.nextInt(0, enemySoundArray.size).let {
-                        enemySoundArray[it].play()
+                    Random.nextInt(0, enemySoundArray.size).let { soundIndex ->
+                        launchImmediately {
+                            enemySoundArray[soundIndex].play()
+                        }
                     }
                 }
             }

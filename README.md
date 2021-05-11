@@ -3,5 +3,6 @@
 Kotlin Multiplatform Game
 
 # Play
-HTML5: https://feliperce.github.io/MolesAttack-Distribution/
-JAR: https://feliperce.github.io/MolesAttack-Distribution/jar/MolesAttack.jar
+Html/js: https://feliperce.github.io/MolesAttack-Distribution/
+
+Jar: https://feliperce.github.io/MolesAttack-Distribution/jar/MolesAttack.jar

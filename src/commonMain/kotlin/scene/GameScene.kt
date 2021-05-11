@@ -56,7 +56,7 @@ class GameScene : Scene() {
     override suspend fun Container.sceneMain() {
         val isDebugMode = false
 
-        val gameMusicChannel = gameMusic.play(infinitePlaybackTimes)
+        val gameMusicChannel = gameMusic.play()
 
         val qtColumn = 4
         val qtRow = 4
@@ -134,8 +134,10 @@ class GameScene : Scene() {
             }
 
             enemy.addUpdater {
+
                 if (this.failure) {
                     launchImmediately {
+                        //enemySoundArray[0].play()
                         errorSound.play()
                     }
                     val error = text("X", textSize = this.width/2, color = Colors.RED).position(this.x+30, this.y)
@@ -173,14 +175,15 @@ class GameScene : Scene() {
                 val randomPositionIndex = Random.nextInt(0, enemyArray.size)
                 val generateEnemySound = Random.nextBoolean()
                 enemyArray[randomPositionIndex].showIfNotIdle()
-
-                if (generateEnemySound) {
-                    Random.nextInt(0, enemySoundArray.size).let { soundIndex ->
-                        launchImmediately {
-                            enemySoundArray[soundIndex].play()
-                        }
+                launchImmediately {
+                    // Not Working on JS, KORGE BUG
+                    // enemySoundArray[soundIndex].play()
+                    // "Fix" for Korge Bug
+                    if (generateEnemySound) {
+                        enemyArray[randomPositionIndex].callRandomEnemySound()
                     }
                 }
+
             }
 
             // increase dificulty

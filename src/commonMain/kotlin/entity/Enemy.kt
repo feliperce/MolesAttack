@@ -2,6 +2,7 @@ package entity
 
 import com.soywiz.klock.milliseconds
 import com.soywiz.klock.seconds
+import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.view.*
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
@@ -105,6 +106,11 @@ class Enemy(
             playAnimation(showAnimation, spriteDisplayTime = movementSpeeds[randomSpeedIndex].seconds, endFrame = 3)
             status = Status.SHOWING
         }
+    }
+
+    suspend fun callRandomEnemySound() {
+        val randomPositionIndex = Random.nextInt(1, 6)
+        resourcesVfs["sound/enemy/snd_enemy${randomPositionIndex}.wav"].readSound().play()
     }
 
     fun kill() {

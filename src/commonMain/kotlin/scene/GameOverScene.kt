@@ -47,17 +47,11 @@ class GameOverScene(
 			position(20, views.virtualHeight-70)
 		}
 
-		val menuButtonGui = Image(menuButtonBitmap).apply {
-			scale(0.6, 0.6)
-			position(views.virtualWidth-70, views.virtualHeight-70)
-		}
-
 		gameOverSound.play()
 
 		addChild(bg)
 		addChild(gameOverGui)
 		addChild(replayButtonGui)
-		addChild(menuButtonGui)
 
 		val gratzText = text("GAMEOVER", textSize = 20.0, alignment = TextAlignment.LEFT).apply {
 			setPositionRelativeTo(gameOverGui, Point(10, 10))
@@ -77,10 +71,5 @@ class GameOverScene(
 			}
 		}
 
-		menuButtonGui.onClick {
-			launchImmediately {
-				sceneContainer.changeTo<MenuScene>()
-			}
-		}
 	}
 }

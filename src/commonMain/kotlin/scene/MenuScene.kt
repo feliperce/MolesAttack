@@ -1,7 +1,5 @@
 package scene
 
-import com.soywiz.klock.infiniteTimes
-import com.soywiz.korau.sound.infinitePlaybackTimes
 import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
@@ -12,7 +10,7 @@ import com.soywiz.korio.file.std.resourcesVfs
 
 class MenuScene() : Scene() {
 
-    override suspend fun Container.sceneInit() {
+    override suspend fun SContainer.sceneInit() {
 
         val menuMusic = resourcesVfs["sound/msc_menu.wav"].readSound().play()
 

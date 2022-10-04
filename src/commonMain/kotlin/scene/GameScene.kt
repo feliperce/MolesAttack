@@ -2,7 +2,6 @@ package scene
 
 import com.soywiz.klock.seconds
 import com.soywiz.korau.sound.Sound
-import com.soywiz.korau.sound.infinitePlaybackTimes
 import com.soywiz.korau.sound.readSound
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.scene.Scene
@@ -18,7 +17,6 @@ import com.soywiz.korma.geom.Point
 import data.GameOver
 import entity.Enemy
 import entity.Hammer
-import kotlinx.coroutines.coroutineScope
 import kotlin.random.Random
 
 class GameScene : Scene() {
@@ -31,7 +29,7 @@ class GameScene : Scene() {
     private lateinit var hitSound: Sound
     private lateinit var enemySoundArray: Array<Sound>
 
-    override suspend fun Container.sceneInit() {
+    override suspend fun SContainer.sceneInit() {
 
         bgImg = resourcesVfs["img/bg_game.png"].readBitmap()
         lifeBitmap = resourcesVfs["img/gui_life.png"].readBitmap()
@@ -53,7 +51,7 @@ class GameScene : Scene() {
 
     }
 
-    override suspend fun Container.sceneMain() {
+    override suspend fun SContainer.sceneMain() {
         val isDebugMode = false
 
         val gameMusicChannel = gameMusic.play()
@@ -176,9 +174,6 @@ class GameScene : Scene() {
                 val generateEnemySound = Random.nextBoolean()
                 enemyArray[randomPositionIndex].showIfNotIdle()
                 launchImmediately {
-                    // Not Working on JS, KORGE BUG
-                    // enemySoundArray[soundIndex].play()
-                    // "Fix" for Korge Bug
                     if (generateEnemySound) {
                         enemyArray[randomPositionIndex].callRandomEnemySound()
                     }

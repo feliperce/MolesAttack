@@ -27,6 +27,8 @@ korge {
 
 // To selectively enable targets
 
+	addDependency("jvmMainImplementation", "com.google.code.gson:gson:2.9.0")
+
 	targetJvm()
 	targetJs()
 	targetDesktop()

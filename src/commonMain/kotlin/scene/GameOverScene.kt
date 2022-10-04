@@ -23,7 +23,7 @@ class GameOverScene(
 	private lateinit var menuButtonBitmap: Bitmap
 	private lateinit var gameOverSound: Sound
 
-    override suspend fun Container.sceneInit() {
+	override suspend fun SContainer.sceneInit() {
 		bgImg = resourcesVfs["img/bg_game.png"].readBitmap()
 		gameoverBitmap = resourcesVfs["img/gui_gameover.png"].readBitmap()
 		replayButtonBitmap = resourcesVfs["img/gui_btn_replay.png"].readBitmap()
@@ -31,7 +31,7 @@ class GameOverScene(
 		gameOverSound = resourcesVfs["sound/snd_gameover.mp3"].readSound()
     }
 
-	override suspend fun Container.sceneMain() {
+	override suspend fun SContainer.sceneMain() {
 
 		val bg = Image(bgImg)
 		bg.size(views.virtualWidth, views.virtualHeight)
